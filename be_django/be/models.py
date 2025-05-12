@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class User(models.Model):
@@ -8,6 +9,9 @@ class User(models.Model):
   # password_hash = models.pass
   created_at = models.DateTimeField(auto_now=True)
 
+  def __str__(self):
+    return f"{self.first_name} {self.last_name} - {self.email}"
+
 class Goal(models.Model):
   user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -15,7 +19,9 @@ class GoalHistory(models.Model):
   goal_id = models.ForeignKey(Goal, on_delete=models.CASCADE)
   goal_name = models.CharField(max_length=140)
   goal_description = models.CharField(max_length=2000)
-  priority = models.IntegerField()
+  priority = models.IntegerField(
+    validators=[MinValueValidator(1), MaxValueValidator(10)]
+  )
   due_date = models.DateTimeField()
   created_at = models.DateTimeField(auto_now=True)
 
@@ -39,7 +45,9 @@ class Task(models.Model):
   user_id = models.ForeignKey(User, on_delete=models.CASCADE)
   due_date = models.DateTimeField()
   created_at = models.DateTimeField(auto_now=True)
-  priority = models.IntegerField()
+  priority = models.IntegerField(
+    validators=[MinValueValidator(1), MaxValueValidator(10)]
+  )
   is_completed = models.BooleanField()
   recurrence_interval = models.DurationField()
 
